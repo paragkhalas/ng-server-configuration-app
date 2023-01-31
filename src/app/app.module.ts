@@ -9,12 +9,14 @@ import { FilterServerPipe } from './pipes/filter-server.pipe';
 import { FilterSelectionPipe } from './pipes/filter-selection.pipe';
 
 import { MaterialModule } from './material/material.module';
+import { AddServerComponent } from './components/add-server/add-server.component';
 
 @NgModule({
   declarations: [
     FilterServerPipe,
     FilterSelectionPipe,
-    AppComponent
+    AppComponent,
+    AddServerComponent
   ],
   imports: [
     BrowserModule,

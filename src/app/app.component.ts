@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { AddServerComponent } from './components/add-server/add-server.component';
 
 interface Server {
   name: string;
@@ -9,10 +11,7 @@ interface Server {
   server_nat_ip: string;
   status: string;
 };
-interface NetSpace {
-  id: number;
-  name: string;
-}
+
 
 @Component({
   selector: 'app-root',
@@ -66,32 +65,8 @@ export class AppComponent {
     }
   ];
 
-  natSpaces: NetSpace[] = [
-    {
-      id: 1,
-      name: "Box"
-    },
-    {
-      id: 12,
-      name: "DoS"
-    },
-    {
-      id: 13,
-      name: "Server Box"
-    },
-    {
-      id: 14,
-      name: "Nat-vat"
-    },
-    {
-      id: 15,
-      name: "ZTh-vtc-1275844"
-    },
-    {
-      id: 17,
-      name: "GBD"
-    }
-  ];
+
+  constructor(public dialog: MatDialog) { }
 
   addToSelection(name: string) {
     if (this.selectedServer.includes(name)) {
@@ -107,9 +82,22 @@ export class AppComponent {
 
   createServer() {
     console.log('create new server');
+    const dialogRef = this.dialog.open(AddServerComponent, {
+      width: '80vw'
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+
+      if (data.clicked === 'submit') {
+        console.log('Sumbit button clicked', data.form);
+        this.serverList.push(data.form);
+      }
+    });
   }
 
   removeServer(servers: string[]) {
     console.log('remove server list', servers);
+    const filteredArray = this.serverList.filter(({ name }) => !servers.some((e) => e === name))
+    this.serverList = filteredArray;
   }
 }

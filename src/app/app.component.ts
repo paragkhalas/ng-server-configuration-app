@@ -1,16 +1,10 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddServerComponent } from './components/add-server/add-server.component';
+import { ConfirmDialogModel, ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { Server } from './typings/server-modals';
 
-interface Server {
-  name: string;
-  description: string;
-  server_ip: string;
-  nat_space_id: string;
-  server_nat_ip: string;
-  status: string;
-};
 
 
 @Component({
@@ -45,7 +39,7 @@ export class AppComponent {
       server_ip: "10.19.19.23",
       nat_space_id: "12",
       server_nat_ip: "122.12.19.21",
-      status: "erorr"
+      status: "error"
     },
     {
       name: "Nat-vat",
@@ -66,7 +60,7 @@ export class AppComponent {
   ];
 
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   addToSelection(name: string) {
     if (this.selectedServer.includes(name)) {
@@ -76,28 +70,79 @@ export class AppComponent {
     this.selectedServer = [...this.selectedServer, name];
   }
 
-  updateServer(server: string) {
-    console.log('update server', server);
+  updateServer(serverName: string) {
+    const filteredServer = this.serverList.filter((serverObj: Server) => serverObj.name === serverName);
+    if (filteredServer.length) {
+      const server = filteredServer[0];
+      const dialogRef = this.dialog.open(AddServerComponent, {
+        width: '80vw',
+        data: {
+          formVal: {
+            name: server.name,
+            description: server.description,
+            server_ip: server.server_ip,
+            nat_space_id: server.nat_space_id,
+            server_nat_ip: server.server_nat_ip,
+            status: server.status
+          },
+          serverList: this.serverList,
+          isUpdate: true
+        }
+      });
+
+      dialogRef.afterClosed().subscribe((data) => {
+        this.selectedServer = [];
+        if (data.clicked === 'submit') {
+          let serverIndex = this.serverList.findIndex((serverObj => serverObj.server_ip === server.server_ip));
+          this.serverList[serverIndex] = { ...data.form, server_ip: server.server_ip };
+          this.snackBar.open('Server updated successfully.', 'Done');
+        }
+      });
+    } else {
+      this.snackBar.open('Server not available.')
+    }
+
   }
 
   createServer() {
-    console.log('create new server');
     const dialogRef = this.dialog.open(AddServerComponent, {
-      width: '80vw'
+      width: '80vw',
+      data: {
+        formVal: {
+          name: '',
+          description: '',
+          server_ip: '',
+          nat_space_id: '',
+          server_nat_ip: '',
+          status: 'pending',
+
+        },
+        serverList: this.serverList,
+        isUpdate: false
+      }
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-
       if (data.clicked === 'submit') {
-        console.log('Sumbit button clicked', data.form);
         this.serverList.push(data.form);
+        this.snackBar.open('Server added successfully.', 'Done');
       }
     });
   }
 
   removeServer(servers: string[]) {
-    console.log('remove server list', servers);
-    const filteredArray = this.serverList.filter(({ name }) => !servers.some((e) => e === name))
-    this.serverList = filteredArray;
+    const dialogData = new ConfirmDialogModel("Confirm Action", "Are you sure you want to delete?");
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      maxWidth: "400px",
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(isRemove => {
+      if (isRemove) {
+        this.serverList = this.serverList.filter(({ name }) => !servers.some((e) => e === name));
+        this.selectedServer = [];
+        this.snackBar.open('Server removed successfully.', 'Close');
+      }
+    });
   }
 }

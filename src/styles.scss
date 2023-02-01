@@ -23,21 +23,52 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #e3e3e3; 
   }
-  
+
+  .dialog-container {
+    .mat-mdc-dialog-actions {
+        padding: 0 24px;
+      }
+  }
+
 .server-list {
+    .btn-filter-content {
+        margin: 16px 0;
+    }
     .selection-list {
-        margin-top: 36px;
         height: 500px;
         overflow-y: auto;
     }
     .mat-expansion-panel {
         margin-bottom: 12px;
+        &.red-grid {
+            border-left: 3px solid red;
+            .status{
+                .mat-icon {
+                    color: red;
+                }
+            }
+        }
+        &.green-grid {
+            border-left: 3px solid green;
+            .status{
+                .mat-icon {
+                    color: green;
+                }
+            }
+        }
+        &.amber-grid {
+            border-left: 3px solid rgb(248, 178, 27);
+            .status{
+                .mat-icon {
+                    color: rgb(248, 178, 27);
+                }
+            }
+        }
     }
 
     .status {
         display: flex;
         .mat-icon {
-            color: green;
             margin-right: 4px;
         }
     }

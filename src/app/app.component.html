@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <h3>{{ title }}</h3>
   <div class="server-list">
-    <div fxLayout="row" fxLayoutAlign="space-between">
+    <div fxLayout="row" fxLayoutAlign="space-between" class="btn-filter-content">
       <div fxLayout="row" fxLayoutAlign="start" fxLayoutGap="10px">
         <button mat-flat-button color="primary" (click)="createServer();">Create Server</button>
         <button mat-flat-button color="accent" (click)="selectedServer.length && updateServer(selectedServer[0])"
@@ -15,7 +15,11 @@
     </div>
     <div class="selection-list">
       <mat-accordion class="example-headers-align" multi>
-        <mat-expansion-panel *ngFor="let server of serverList | serverFilter: searchServer; let i = index">
+        <mat-expansion-panel [ngClass]="{
+          'red-grid': server.status === 'error',
+          'green-grid': server.status === 'online',
+          'amber-grid': server.status === 'pending'
+        }" *ngFor="let server of serverList | serverFilter: searchServer; let i = index">
           <mat-expansion-panel-header>
             <mat-panel-title (click)="$event.stopPropagation();">
               <mat-checkbox color="primary" (click)="addToSelection(server.name);$event.stopPropagation()"
@@ -24,7 +28,10 @@
               </mat-checkbox>
             </mat-panel-title>
             <mat-panel-description (click)="$event.stopPropagation();">
-              <span class="status"><mat-icon>check_circle</mat-icon>{{server.status | titlecase }}</span>
+              <span class="status">
+                <mat-icon>check_circle</mat-icon>
+                {{server.status | titlecase }}
+              </span>
 
               <button mat-icon-button [matMenuTriggerFor]="menu">
                 <mat-icon>more_vert</mat-icon>

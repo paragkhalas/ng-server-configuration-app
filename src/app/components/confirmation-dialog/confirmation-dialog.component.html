@@ -1,0 +1,14 @@
+<div class="dialog-container">
+    <h2 mat-dialog-title>{{title}}</h2>
+    <mat-dialog-content>
+        <p>{{message}}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-stroked-button (click)="onDismiss()">
+            Close
+        </button>
+        <button mat-flat-button color="primary" (click)="onConfirm()">
+            Submit
+        </button>
+    </mat-dialog-actions>
+</div>

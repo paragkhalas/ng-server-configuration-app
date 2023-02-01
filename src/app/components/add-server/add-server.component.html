@@ -1,20 +1,20 @@
-<div class="form-container">
+<div class="dialog-container">
     <h2 mat-dialog-title>Angular material dialog prompt</h2>
     <mat-dialog-content>
         <form [formGroup]="form">
             <mat-form-field>
                 <mat-label>Name</mat-label>
-                <input matInput placeholder="Enter your name" formControlName="name" />
+                <input matInput formControlName="name" />
             </mat-form-field>
 
             <mat-form-field>
                 <mat-label>Description</mat-label>
-                <textarea matInput placeholder="Description" formControlName="description"></textarea>
+                <textarea matInput formControlName="description"></textarea>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
                 <mat-label>Status</mat-label>
-                <mat-select matNativeControl name="country" formControlName="country">
+                <mat-select matNativeControl name="status" formControlName="status">
                     <mat-option value="pending">pending</mat-option>
                     <mat-option value="online">online</mat-option>
                     <mat-option value="error">error</mat-option>
@@ -29,8 +29,10 @@
             </mat-form-field>
             <mat-form-field>
                 <mat-label>IP Address</mat-label>
-                <input matInput placeholder="IP Address" formControlName="server_ip"
-                    [disabled]="form.controls['nat_space_id'].value.length == 0" />
+                <input matInput formControlName="server_ip" />
+                <mat-error *ngIf="hasError('server_ip', 'ipError')">
+                    IP address is wrong
+                </mat-error>
             </mat-form-field>
         </form>
     </mat-dialog-content>
@@ -38,7 +40,7 @@
         <button mat-stroked-button (click)="dialogRef.close(false)">
             Close
         </button>
-        <button mat-raised-button color="primary" (click)="submit(form.value)">
+        <button mat-flat-button color="primary" (click)="submit(form.value)">
             Submit
         </button>
     </mat-dialog-actions>
